@@ -1,1 +1,1 @@
-
+import '/src/immutable.js'
