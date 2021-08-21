@@ -7,6 +7,49 @@
     <title>Dia 3</title>
   </head>
   <body>
+    <form data-js="form" >
+      <input type="text" name="" data-js="username">
+    </form>
+
+    <div class="cars">
+      <form data-js="cars-form">
+        <div>
+          <label for="image">Imagem (URL)</label>
+          <input type="text" name="image" id="image">
+        </div>
+        <div>
+          <label for="brand-model">Marca / Modelo</label>
+          <input type="text" name="brand-model" id="brand-model">
+        </div>
+        <div>
+          <label for="year">Ano</label>
+          <input type="number" name="year" id="year">
+        </div>
+        <div>
+          <label for="plate">Placa</label>
+          <input type="text" name="plate" id="plate">
+        </div>
+        <div>
+          <label for="color">Cor</label>
+          <input type="color" name="color" id="color">
+        </div>
+
+        <button type="submit">Cadastrar carro</button>
+      </form>
+
+      <table border="1">
+        <thead>
+          <tr>
+            <th>Imagem</th>
+            <th>Marca</th>
+            <th>Ano</th>
+            <th>Placa</th>
+            <th>Cor</th>
+          </tr>
+        </thead>
+        <tbody data-js="table"></tbody>
+      </table>
+    </div>
     <script type="module" src="/src/main.js"></script>
   </body>
 </html>
