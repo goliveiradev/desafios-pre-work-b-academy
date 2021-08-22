@@ -1,5 +1,6 @@
 import './style.css'
 
+const url = 'http://localhost:3333/cars'
 const form = document.querySelector('[data-js="cars-form"]')
 const table = document.querySelector('[data-js="table"]')
 
@@ -42,12 +43,27 @@ form.addEventListener('submit', (event) => {
   event.preventDefault();
   const getElement = getFormElement(event) // que delicia de clojure cara AAHHH
 
+  const data = {
+    image: getElement('image').value,
+    brandModel: getElement('brand-model').value,
+    year: getElement('year').value,
+    plate: getElement('plate').value,
+    color: getElement('color').value
+  }
+
+  createTabbleRow(data)
+
+  event.target.reset();
+  image.focus()
+})
+
+function createTabbleRow(data) {
   const elements = [
-    { type: 'image', value: getElement('image').value },
-    { type: 'text', value: getElement('brand-model').value },
-    { type: 'text', value: getElement('year').value },
-    { type: 'text', value: getElement('plate').value },
-    { type: 'color', value: getElement('color').value }
+    { type: 'image', value: data.image },
+    { type: 'text', value: data.brandModel },
+    { type: 'text', value: data.year },
+    { type: 'text', value: data.plate },
+    { type: 'color', value: data.color }
   ]
 
   const tr = document.createElement('tr')
@@ -57,7 +73,35 @@ form.addEventListener('submit', (event) => {
   })
 
   table.appendChild(tr)
+}
 
-  event.target.reset();
-  image.focus()
-})
+function createNoCarRow() {
+  const tr = document.createElement('tr')
+  const td = document.createElement('td')
+  const ths = document.querySelectorAll('table th')
+  td.setAttribute('colspan', ths.length)
+  td.textContent = 'Nenhum carro encontrado'
+
+  tr.appendChild(td)
+  table.appendChild(tr)
+}
+
+async function main() {
+  const result = await fetch(url)
+    .then(r => r.json())
+    .catch(e => ({ error: true, message: e.message }))
+
+  if (result.error) {
+    console.log('Erro ao buscar carros', result.message)
+    return
+  }
+
+  if (result.length === 0) {
+    createNoCarRow()
+    return
+  }
+
+  result.forEach(createTabbleRow)
+}
+
+main()
