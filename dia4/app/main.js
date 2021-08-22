@@ -1,5 +1,5 @@
 import './style.css'
-import { get, post } from './http.js'
+import { get, post, del } from './http.js'
 
 const url = 'http://localhost:3333/cars'
 const form = document.querySelector('[data-js="cars-form"]')
@@ -79,12 +79,41 @@ function createTabbleRow(data) {
   ]
 
   const tr = document.createElement('tr')
+  tr.dataset.plate = data.plate
+
   elements.forEach(element => {
     const td = elementTypes[element.type](element.value)
     tr.appendChild(td)
   })
 
+  const button = document.createElement('button')
+  button.textContent = 'Excluir'
+  button.dataset.plate = data.plate
+
+  button.addEventListener('click', handleDelete)
+
+  tr.appendChild(button)
   table.appendChild(tr)
+}
+
+async function handleDelete(event) {
+  const button = event.target
+  const plate = button.dataset.plate
+
+  const result = await del(url, { plate })
+
+  if (result.error) {
+    console.log('erro ao deletar', result.message)
+    return
+  }
+
+  const tr = document.querySelector(`tr[data-plate="${plate}"]`)
+  table.removeChild(tr)
+  button.removeEventListener('click', handleDelete)
+
+  const allTrs = table.querySelectorAll('tr')
+  if (!allTrs)
+    createNoCarRow()
 }
 
 function createNoCarRow() {
@@ -100,9 +129,7 @@ function createNoCarRow() {
 }
 
 async function main() {
-  const result = await fetch(url)
-    .then(r => r.json())
-    .catch(e => ({ error: true, message: e.message }))
+  const result = await get(url)
 
   if (result.error) {
     console.log('Erro ao buscar carros', result.message)
