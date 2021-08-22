@@ -1,4 +1,5 @@
 import './style.css'
+import { get, post } from './http.js'
 
 const url = 'http://localhost:3333/cars'
 const form = document.querySelector('[data-js="cars-form"]')
@@ -39,7 +40,7 @@ function createColor(value) {
   return td
 }
 
-form.addEventListener('submit', (event) => {
+form.addEventListener('submit', async (event) => {
   event.preventDefault();
   const getElement = getFormElement(event) // que delicia de clojure cara AAHHH
 
@@ -50,6 +51,17 @@ form.addEventListener('submit', (event) => {
     plate: getElement('plate').value,
     color: getElement('color').value
   }
+
+  const result = await post(url, data)
+
+  if (result.error) {
+    console.log('deu erro na hora de cadastrar', result.message)
+    return
+  }
+
+  const noContent = document.querySelector('[data-js="no-content"]')
+  if (noContent)
+    table.removeChild(noContent)
 
   createTabbleRow(data)
 
@@ -82,6 +94,7 @@ function createNoCarRow() {
   td.setAttribute('colspan', ths.length)
   td.textContent = 'Nenhum carro encontrado'
 
+  tr.dataset.js = 'no-content'
   tr.appendChild(td)
   table.appendChild(tr)
 }
